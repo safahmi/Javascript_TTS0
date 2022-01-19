@@ -1,10 +1,12 @@
 // F31
 function checkAllLines(array2D) {
+  let AreCorrectsAllLines = true;
   for (let i = 0; i < array2D.length; i++) {
     let line = array2D[i];
     let isValidLine = isValidSingleLine(line);
     if (!isValidLine) {
       //Met dans errorLine : une ligne où il y a une erreur avec son numéro de ligne, la mention "incorrect" et les valeurs de cette ligne
+      AreCorrectsAllLines = true;
       let errorLine = new Array();
       errorLine = errorLine.concat("Line " + (i + 1) + " incorrect");
       errorLine = errorLine.concat(line);
@@ -12,6 +14,7 @@ function checkAllLines(array2D) {
       generateTable1D(table, errorLine);
     }
   }
+  return AreCorrectsAllLines;
 }
 
 //Transforme une colonne donnée d'un tableau 2D en une ligne
@@ -25,11 +28,13 @@ function extractColumn(array2D, colIndex) {
 
 // F32
 function checkAllColumns(array2D) {
+  let AreCorrectsAllColumns = true;
   for (let j = 0; j < array2D.length; j++) {
     let column = extractColumn(array2D, j);
     let isValidColumn = isValidSingleLine(column);
     if (!isValidColumn) {
       //Met dans errorColumn : la colonne extraite (ligne 29 du code) où il y a une erreur avec son numéro de colonne, la mention "incorrect" et les valeurs de cette colonne
+      AreCorrectsAllColumns = false;
       let errorColumn = new Array();
       errorColumn = errorColumn.concat("Column " + (j + 1) + " incorrect");
       errorColumn = errorColumn.concat(column);
@@ -37,6 +42,7 @@ function checkAllColumns(array2D) {
       generateTable1D(table, errorColumn);
     }
   }
+  return AreCorrectsAllColumns;
 }
 
 //Transforme une région d'index donnée d'un tableau 2D en une ligne
@@ -68,11 +74,13 @@ function extractRegion(array2D, regIndex) {
 
 // F33
 function checkAllRegions(array2D) {
+  let AreCorrectsAllRegion = true;
   for (let reg = 0; reg < array2D.length; reg++) {
     let region = extractRegion(array2D, reg + 1);
     let isValidRegion = isValidSingleLine(region);
     if (!isValidRegion) {
       //Met dans errorRegion : la region extraite (ligne 72 du code) où il y a une erreur avec son numéro de région, la mention "incorrect" et les valeurs de cette région
+      AreCorrectsAllRegion = false;
       let errorRegion = new Array();
       errorRegion = errorRegion.concat("Region " + (reg + 1) + " incorrect");
       errorRegion = errorRegion.concat(region);
@@ -80,11 +88,16 @@ function checkAllRegions(array2D) {
       generateTable1D(table, errorRegion);
     }
   }
+  return AreCorrectsAllRegion;
 }
 
 //Affiche dans un second tableau les lignes, colonnes ou régions contenant des erreurs une fois la page HTML chargée
 document.addEventListener("DOMContentLoaded", (event) => {
-  checkAllLines(array2DToCheck);
-  checkAllColumns(array2DToCheck);
-  checkAllRegions(array2DToCheck);
+  const AreCorrectsAllLines = checkAllLines(array2DToCheck);
+  const AreCorrectsAllColumns = checkAllColumns(array2DToCheck);
+  const AreCorrectsAllRegion = checkAllRegions(array2DToCheck);
+  if (AreCorrectsAllLines && AreCorrectsAllColumns && AreCorrectsAllRegion) {
+    let table = document.querySelector("#errors");
+    generateTable1D(table, ["Sudoku is correct"]);
+  }
 });
